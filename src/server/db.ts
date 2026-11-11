@@ -11,8 +11,25 @@ function createPrismaClient() {
   }
 
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString }),
+    adapter: createAdapter(connectionString),
     omit: { user: { passwordHash: true } },
+  })
+}
+
+
+function createAdapter(connectionString: string) {
+  const ca = process.env.DATABASE_CA_CERT
+  if (!ca) {
+    return new PrismaPg({ connectionString })
+  }
+
+
+  const url = new URL(connectionString)
+  url.searchParams.delete("sslmode")
+
+  return new PrismaPg({
+    connectionString: url.toString(),
+    ssl: { ca, rejectUnauthorized: true },
   })
 }
 
