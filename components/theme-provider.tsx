@@ -47,7 +47,9 @@ function ThemeHotkey() {
         return
       }
 
-      if (event.key.toLowerCase() !== "d") {
+      // `key` can be missing, e.g. on the synthetic keydown Chrome fires when
+      // autofilling a form, so guard before normalizing it.
+      if (event.key?.toLowerCase() !== "d") {
         return
       }
 
