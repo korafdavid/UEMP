@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+// The connection URL is configured in prisma.config.ts (Prisma 7+).
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  LECTURER
+  HOD
+  ADMIN
+}
+
+// Identity and access only. Matriculation numbers, departments, programs
+// and lecturer assignments belong in separate academic models.
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // citext makes the unique constraint case-insensitive.
+  email        String   @unique @db.Citext
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  passwordHash String   @map("password_hash")
+  role         Role
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("users")
+}
