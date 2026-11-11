@@ -20,6 +20,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { logout } from "@/app/actions/auth"
 import { EllipsisVerticalIcon, CircleUserRoundIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
 
 export function NavUser({
@@ -28,10 +29,16 @@ export function NavUser({
   user: {
     name: string
     email: string
-    avatar: string
+    avatar?: string
   }
 }) {
   const { isMobile } = useSidebar()
+  const initials = user.name
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -43,7 +50,7 @@ export function NavUser({
           >
             <Avatar className="size-8 rounded-lg grayscale">
               <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -64,7 +71,7 @@ export function NavUser({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -94,7 +101,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void logout()}>
               <LogOutIcon
               />
               Log out

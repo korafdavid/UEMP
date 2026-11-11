@@ -19,3 +19,8 @@ To use the components in your app, import them as follows:
 ```tsx
 import { Button } from "@/components/ui/button";
 ```
+
+
+Used Aiven for Postgres. It sign server certificates with their
+ * own CA. Provide that CA (PEM contents) in
+ * DATABASE_CA_CERT so the server is verified instead of trusting it blindly

@@ -1,4 +1,10 @@
+"use client"
+
+import { useActionState } from "react"
+
 import { cn } from "cn"
+
+import { login } from "@/app/actions/auth"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +17,7 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -20,6 +27,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [state, formAction, pending] = useActionState(login, undefined)
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -30,16 +39,26 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction} noValidate>
             <FieldGroup>
-              <Field>
+              {state?.message && (
+                <p role="alert" className="text-sm text-destructive">
+                  {state.message}
+                </p>
+              )}
+              <Field data-invalid={!!state?.errors?.email || undefined}>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="m@example.com"
+                  defaultValue={state?.email}
+                  aria-invalid={!!state?.errors?.email || undefined}
                   required
                 />
+                <FieldError>{state?.errors?.email?.[0]}</FieldError>
               </Field>
               <Field>
                 <div className="flex items-center">
@@ -51,10 +70,20 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  aria-invalid={!!state?.errors?.password || undefined}
+                  required
+                />
+                <FieldError>{state?.errors?.password?.[0]}</FieldError>
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit" disabled={pending}>
+                  {pending ? "Logging in…" : "Login"}
+                </Button>
                 <Button variant="outline" type="button">
                   Login with Google
                 </Button>
