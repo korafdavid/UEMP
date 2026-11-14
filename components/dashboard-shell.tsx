@@ -27,6 +27,7 @@ export function DashboardShell({
       <AppSidebar
         variant="inset"
         homeUrl={homeUrl}
+        quickCreateUrl={user.role === "ADMIN" ? "/admin/create-user" : undefined}
         user={{ name: `${user.firstName} ${user.lastName}`, email: user.email }}
       />
       <SidebarInset>

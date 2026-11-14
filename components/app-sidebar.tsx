@@ -173,9 +173,11 @@ const data = {
 export function AppSidebar({
   user,
   homeUrl,
+  quickCreateUrl,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
   homeUrl: string
+  quickCreateUrl?: string
   user: { name: string; email: string; avatar?: string }
 }) {
   return (
@@ -195,6 +197,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain
+          quickCreateUrl={quickCreateUrl}
           items={data.navMain.map((item) =>
             item.title === "Dashboard" ? { ...item, url: homeUrl } : item
           )}

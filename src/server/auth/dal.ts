@@ -4,6 +4,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 
+import type { Role } from "@/src/generated/prisma/client"
 import { db } from "@/src/server/db"
 import { dashboardPathFor, type DashboardPath } from "@/src/server/auth/roles"
 import { decrypt, SESSION_COOKIE } from "@/src/server/auth/session"
@@ -39,5 +40,15 @@ export type CurrentUser = Awaited<ReturnType<typeof getCurrentUser>>
 export async function requireDashboardAccess(path: DashboardPath) {
   const user = await getCurrentUser()
   if (dashboardPathFor(user.role) !== path) redirect(dashboardPathFor(user.role))
+  return user
+}
+
+/**
+ * Strict role gate for pages and server actions. Unlike requireDashboardAccess
+ * this checks the exact role, so a HOD does not pass an ADMIN check.
+ */
+export async function requireRole(...roles: Role[]) {
+  const user = await getCurrentUser()
+  if (!roles.includes(user.role)) redirect(dashboardPathFor(user.role))
   return user
 }
