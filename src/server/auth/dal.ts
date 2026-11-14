@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { cache } from "react"
 
 import { db } from "@/src/server/db"
+import { dashboardPathFor, type DashboardPath } from "@/src/server/auth/roles"
 import { decrypt, SESSION_COOKIE } from "@/src/server/auth/session"
 
 /** Verifies the session cookie, redirecting to /login when it's missing or invalid. */
@@ -30,3 +31,13 @@ export const getCurrentUser = cache(async () => {
 })
 
 export type CurrentUser = Awaited<ReturnType<typeof getCurrentUser>>
+
+/**
+ * Authorizes a page for one dashboard. Signed-in users with a different role
+ * are sent to their own dashboard instead of seeing a 403.
+ */
+export async function requireDashboardAccess(path: DashboardPath) {
+  const user = await getCurrentUser()
+  if (dashboardPathFor(user.role) !== path) redirect(dashboardPathFor(user.role))
+  return user
+}

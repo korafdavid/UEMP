@@ -172,8 +172,10 @@ const data = {
 }
 export function AppSidebar({
   user,
+  homeUrl,
   ...props
 }: React.ComponentProps<typeof Sidebar> & {
+  homeUrl: string
   user: { name: string; email: string; avatar?: string }
 }) {
   return (
@@ -183,7 +185,7 @@ export function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton
               className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<a href="#" />}
+              render={<a href={homeUrl} />}
             >
               <CommandIcon className="size-5!" />
               <span className="text-base font-semibold">Uni Portal.</span>
@@ -192,7 +194,11 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={data.navMain.map((item) =>
+            item.title === "Dashboard" ? { ...item, url: homeUrl } : item
+          )}
+        />
         <NavDocuments items={data.documents} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
